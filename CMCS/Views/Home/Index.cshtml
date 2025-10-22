@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container py-5">
+
+    
+    <div class="jumbotron text-center bg-light p-5 rounded shadow-sm">
+        <h1 class="display-4 mb-3">Welcome to CMCS</h1>
+        <p class="lead mb-4">Efficiently manage and track your claims, approvals, and payments.</p>
+        <a class="btn btn-primary btn-lg me-2" asp-controller="Lecturer" asp-action="Create">Submit a Claim</a>
+        <a class="btn btn-outline-primary btn-lg" asp-controller="Lecturer" asp-action="MyLogs">View My Logs</a>
+    </div>
+
+    <div class="row text-center mt-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Lecturer Dashboard</h5>
+                    <p class="card-text">Submit and track your claims quickly and efficiently.</p>
+                    <a class="btn btn-primary" asp-controller="Lecturer" asp-action="Create">Go</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Coordinator Dashboard</h5>
+                    <p class="card-text">Review and approve submitted claims.</p>
+                    <a class="btn btn-primary" asp-controller="Coordinator" asp-action="Dashboard">Go</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Manager Dashboard</h5>
+                    <p class="card-text">Manage payments and track claim statuses.</p>
+                    <a class="btn btn-primary" asp-controller="Manager" asp-action="Dashboard">Go</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 text-center">
+        <h2>Learn More</h2>
+        <p>Check out <a href="https://learn.microsoft.com/aspnet/core" target="_blank">ASP.NET Core documentation</a> for more information about building Web apps.</p>
+    </div>
+
+</div>

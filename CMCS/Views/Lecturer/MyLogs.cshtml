@@ -1,0 +1,96 @@
+﻿
+
+@{
+    Layout = "_Layout";
+    var name = (string)(ViewBag.MentorName ?? "");
+    var statuses = (IEnumerable<string>)(ViewBag.Statuses ?? new[] { "All", "Pending", "NeedsFix", "CoordinatorApproved", "ManagerApproved", "Rejected" });
+    var currentStatus = (string)(ViewBag.Status ?? "All");
+}
+
+<h2 class="mb-3">My Logs (All Claims)</h2>
+
+@if (TempData["Msg"] != null)
+{
+    <div class="alert alert-info">@TempData["Msg"]</div>
+}
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input class="form-control" name="mentorName" value="@name" placeholder="Filter by mentor name…" />
+    </div>
+    <div class="col-md-3">
+        <select class="form-select" name="status">
+            @foreach (var s in statuses)
+            {
+                <option value="@s" selected="@(s == currentStatus ? "selected" : null)">@s</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-primary" type="submit">Apply</button>
+        <a class="btn btn-outline-secondary" href="/MentorLogs/MyLogs">Clear</a>
+    </div>
+</form>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-secondary">No logs.</div>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Created</th>
+                <th>Hours</th>
+                <th>Rate</th>
+                <th>Notes</th>
+                <th>Evidence</th>
+                <th>Stage</th>
+                <th>Reviewer Note</th>
+                <th>Payment</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model)
+            {
+                <tr>
+                    <td>@m.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@m.HoursWorked</td>
+                    <td>@m.HourlyRate</td>
+                    <td>@m.Notes</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(m.EvidenceFileName))
+                        {
+                            <a href="/uploads/@m.EvidenceFileName" target="_blank">Open</a>
+                        }
+                    </td>
+                    <td>
+                        <span class="badge @(m.Status == "Pending" ? "bg-secondary" : m.Status == "NeedsFix" ? "bg-warning" : m.Status == "CoordinatorApproved" ? "bg-info" : m.Status == "ManagerApproved" ? "bg-primary" : "bg-danger")">@m.Status</span>
+                    </td>
+                    <td>@m.ReviewNote</td>
+                    <td>
+                        @if (m.PaymentStatus == "Paid")
+                        {
+                            <span class="badge bg-success">Paid</span>
+                            <div class="small">Ref: @m.PaymentReference</div>
+                            <div class="small">At: @m.PaidAtUtc?.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</div>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Unpaid</span>
+                        }
+                    </td>
+                    <td>
+                        @if (m.Status == "NeedsFix")
+                        {
+                            <a class="btn btn-sm btn-outline-primary" href="/MentorLogs/Edit/@m.Id">Fix & Resubmit</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

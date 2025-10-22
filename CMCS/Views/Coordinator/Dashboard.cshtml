@@ -1,0 +1,65 @@
+﻿@model IEnumerable<CMCS.Models.ClaimDocument>
+
+@{
+    ViewData["Title"] = "Pending Claims for Verification";
+}
+@{
+    Layout = "_Layout";
+    var name = (string)(ViewBag.MentorName ?? "");
+}
+<h2 class="mb-3">Coordinator — Pending</h2>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-5">
+        <input class="form-control" name="mentorName" value="@name" placeholder="Filter by mentor name…" />
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-primary" type="submit">Apply</button>
+        <a class="btn btn-outline-secondary" href="/Coordinator/Dashboard">Clear</a>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No pending items.</div>
+}
+else
+{
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr><th>Mentor</th><th>Hours</th><th>Rate</th><th>Notes</th><th>Evidence</th><th>Status</th><th>Submitted</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model)
+            {
+                <tr>
+                    <td>@m.MentorName</td>
+                    <td>@m.HoursWorked</td>
+                    <td>@m.HourlyRate</td>
+                    <td>@m.Notes</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(m.EvidenceFileName))
+                        {
+                            <a href="/uploads/@m.EvidenceFileName" target="_blank">Open</a>
+                        }
+                    </td>
+                    <td><span class="badge @(m.Status == "Pending" ? "bg-secondary" : m.Status == "NeedsFix" ? "bg-warning" : m.Status == "CoordinatorApproved" ? "bg-info" : m.Status == "ManagerApproved" ? "bg-primary" : "bg-danger")">@m.Status</span></td>
+                    <td>@m.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                    <td style="min-width:260px">
+                        @if (m.Status == "Pending")
+                        {
+                            <div class="d-flex flex-column gap-2">
+                                <form asp-action="Approve" method="post"><input type="hidden" name="id" value="@m.Id" /><button class="btn btn-sm btn-success">Approve</button></form>
+                                <form asp-action="Reject" method="post">
+                                    <input type="hidden" name="id" value="@m.Id" />
+                                    <input class="form-control form-control-sm" name="reason" placeholder="Reason..." />
+                                    <button class="btn btn-sm btn-danger mt-1">Reject</button>
+                                </form>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
